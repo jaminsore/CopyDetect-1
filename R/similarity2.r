@@ -11,15 +11,15 @@ for(i in 1:length(item.loc)){
 
 	stop(cat("The item responses should be numeric values (e.g., 1, 2, 3, 4 each representing a response option in a multiple-choice test).\nItem with a column label",colnames(data)[item.loc[i]],"does not contain numeric values. Please check your data structure using 'str()' function. \n"))
 
-	}   
+	}
 }
 
 if(is.numeric(resp.options)!=TRUE) { stop("The vector input provided for the 'resp.options' argument should be numeric. Please check your input vector.")}
 
 for(i in 1:length(item.loc)){
-  
+
   subb = na.omit(unique(data[,item.loc[i]]))
-  
+
 	if(all(subb %in% resp.options)==FALSE){
 	  stop("Item ",i, " includes a response category other than what has been specified as possible respons options. Please check your data")
 	}
@@ -36,7 +36,7 @@ if(is.null(center.id)==FALSE) {
 }
 
 if(max(item.loc) > ncol(data)) {
-stop("The elements of the item location vector is not aligned with the number of columns. Please make sure the column numbers you provide actually exist for your dataset, and include item responses." ) 
+stop("The elements of the item location vector is not aligned with the number of columns. Please make sure the column numbers you provide actually exist for your dataset, and include item responses." )
 }
 
 data[,person.id] <- as.character(data[,person.id])
@@ -72,20 +72,20 @@ if(((exists("single.pair") & is.null(single.pair)==FALSE)  + (exists("many.pairs
 if(is.vector(single.pair)==FALSE & is.null(single.pair)==FALSE) { stop("'single.pair' argument is not a vector.If you are computing the response similarity indices for a single pair, please make sure 'single.pair' argument is a vector with two elements.") }
 
 if(is.vector(single.pair)==TRUE) {
-	if(length(single.pair)!=2){stop("'single.pair' vector has more than two numbers. It should be a vector of length two. The first element indicates the row number in the response data file for the suspected copier examinee, and the second element indicates the row number in the response data file for the suspected source examinee.")}	
-      if(length(which(data[,person.id]==single.pair[1]))!=1 | 
+	if(length(single.pair)!=2){stop("'single.pair' vector has more than two numbers. It should be a vector of length two. The first element indicates the row number in the response data file for the suspected copier examinee, and the second element indicates the row number in the response data file for the suspected source examinee.")}
+      if(length(which(data[,person.id]==single.pair[1]))!=1 |
          length(which(data[,person.id]==single.pair[2]))!=1) { stop("The IDs for the requested pair are not valid. Please check the IDs for the requested pair.")}
 }
 
 if(is.null(many.pairs)==FALSE) {
 	if(is.matrix(many.pairs)==TRUE) {
-		if(ncol(many.pairs)!=2){stop("'many.pairs' argument has more than two columns. It should be a matrix with two columns. The first column indicates the ID in the response data file for the suspected copier examinees, and the second column indicates the ID in the response data file for the suspected source examinees.")}	
+		if(ncol(many.pairs)!=2){stop("'many.pairs' argument has more than two columns. It should be a matrix with two columns. The first column indicates the ID in the response data file for the suspected copier examinees, and the second column indicates the ID in the response data file for the suspected source examinees.")}
 		  for(yyy in 1:nrow(many.pairs)) {
-		   if(length(which(data[,person.id]==many.pairs[yyy,1]))!=1 | 
+		   if(length(which(data[,person.id]==many.pairs[yyy,1]))!=1 |
                   length(which(data[,person.id]==many.pairs[yyy,2]))!=1 ) { stop(paste0("Check the row ",yyy," of the input matrix provided for the 'many.pairs' argument. At least one ID in this row is not a valid ID."))}
-		  }		
-	} else { 
-		stop("The object provided for the 'many.pairs' argument is not a matrix.If you are computing the response similarity indices for multiple pairs, please make sure 'many.pairs' argument is a matrix with two columns. Each row represents a pair of examinees you want to compute the response similarity indices.") 
+		  }
+	} else {
+		stop("The object provided for the 'many.pairs' argument is not a matrix.If you are computing the response similarity indices for multiple pairs, please make sure 'many.pairs' argument is a matrix with two columns. Each row represents a pair of examinees you want to compute the response similarity indices.")
 	}
 
 }
@@ -95,11 +95,11 @@ center_ids <- unique(data[,center.id])
 if(is.null(centers)==FALSE) {
 	if(is.vector(centers)==TRUE) {
 		  for(yyy in 1:length(centers)) {
-		   if(length(which(center_ids==centers[yyy]))!=1 ) { 
+		   if(length(which(center_ids==centers[yyy]))!=1 ) {
 			stop(paste0("Check the center ID ",centers[yyy]," in the vector provided for the 'centers' argument. Center ID " ,centers[yyy] ," does not appear in the dataset."))}
-		  }		
-	} else { 
-		stop("The object provided for the 'centers' argument is not a vector. Please make sure 'centers' argument is a vector containing the labels for centers.") 
+		  }
+	} else {
+		stop("The object provided for the 'centers' argument is not a vector. Please make sure 'centers' argument is a vector containing the labels for centers.")
 	}
 
 }
@@ -127,7 +127,7 @@ if(is.null(centers)==FALSE) {
 
 	for(i in 1:ncol(resp)) {
 
-	  hold1 = ipar.nrm[i,max(resp.options)]	
+	  hold1 = ipar.nrm[i,max(resp.options)]
 	  hold2 = ipar.nrm[i,key[i]]
 
   	  ipar.nrm[i,max(resp.options)] = hold2
@@ -136,7 +136,7 @@ if(is.null(centers)==FALSE) {
 
 	for(i in 1:ncol(resp)) {
 
-	  hold1 = ipar.nrm[i,max(resp.options)+max(resp.options)]	
+	  hold1 = ipar.nrm[i,max(resp.options)+max(resp.options)]
 	  hold2 = ipar.nrm[i,key[i]+max(resp.options)]
 
   	  ipar.nrm[i,max(resp.options)+max(resp.options)] = hold2
@@ -157,9 +157,9 @@ if(is.null(centers)==FALSE) {
 #                            cat("        Item parameter file should have", length(resp.options),"* 2 columns","\n")
 #                           }
 
-			
+
 #########################################################################################################
-			
+
 row.names <- c("Examinee1");for(i in 2:nrow(data)){row.names <- c(row.names,paste("Examinee",i,sep="")) }
 rownames(data) <- row.names
 
@@ -169,21 +169,18 @@ scored.data <- as.data.frame(matrix(nrow=nrow(data[,item.loc]),ncol=ncol(data[,i
 for(i in 1:ncol(scored.data)){ scored.data[,i] <- as.numeric((data[,item.loc[i]]==key[i])*1)}
 
 
-		
+
 #Internal function to compute probability matrix for an ability level of "x"
 
-		irtprob <- function(ability,item.param) {  
-		
-			prob <- matrix(nrow=nrow(item.param),ncol=ncol(item.param)/2)
-
-			for(i in 1:nrow(prob)){
-				ps <- c()
-				for(j in 1:ncol(prob)){ps[j]=exp((item.param[i,j]*ability)+item.param[i,j+ncol(prob)])
-							    }
-				prob[i,]=ps/sum(ps)
-                   }
-		prob
-		}
+  irtprob <- function(ability, item.param) {
+    par_cols <- ncol(item.param)
+    prob_cols <- ncol(item.param) / 2
+    a <- item.param[, 1:prob_cols]
+    c <- item.param[, (prob_cols + 1):par_cols]
+    top <- exp(ability * a + c)
+    top[is.na(top)] <- 0
+    top / rowSums(top)
+  }
 
 #Using scored data, estimate ability levels needed for GBT and w index
 
@@ -219,7 +216,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 
 		theta.est1 <- thetas[pa[1]]
 
-		obs.match <- length(which(form[pa[1],]==form[pa[2],]))                                     
+		obs.match <- length(which(form[pa[1],]==form[pa[2],]))
 
 	      probabilities <- irtprob(ability=theta.est1,item.param=ip)
 
@@ -234,13 +231,13 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 
 				pvec <- c()
 				for(i in 1:ncol(form)){ pvec[i]=probabilities[i,which(resp.options==form[pa[2],i])] }
-                                        
+
 		exp.match <- sum(pvec)
 		sd.match  <- sqrt(sum(pvec*(1-pvec)))
 
-		w.value <- (obs.match-exp.match)/sd.match 
+		w.value <- (obs.match-exp.match)/sd.match
 		p.value <- pnorm(w.value,0,1,lower.tail=FALSE)
-		
+
 		return(list(exp.match=exp.match,obs.match=obs.match,
 				sd.match=sd.match,
 				W.value=w.value,
@@ -253,11 +250,11 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 
 
 	GBT <- function(form,thetas=mle,ip,pa,resp.options) { #start internal function
-	
-		theta.est1 <- thetas[pa[1]]  
+
+		theta.est1 <- thetas[pa[1]]
 		theta.est2 <- thetas[pa[2]]
 
-		obs.match <- length(which(form[pa[1],]==form[pa[2],]))                                       
+		obs.match <- length(which(form[pa[1],]==form[pa[2],]))
 
 	      probabilities1 <- irtprob(ability=theta.est1,item.param=ip)
 
@@ -277,7 +274,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
   			Qi <-1-Pi
 			   Cpi <- cumprod(Pi)
 			     I <- length(Pi)
-	
+
       			M <- matrix(1,(I + 1),I)
 		      	M[1,] <- cumprod(Qi)
 			       for(o in 1:I) {
@@ -302,7 +299,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 				exact.prob.dist=prob.dist.match,
 				p.value=GBT.p.value
 			))
-	
+
 	}#end internal function
 
 #####################                    Computing K-index                 #####################################################
@@ -315,7 +312,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 
 			incorrect.items <- which(form2[pa[2],]==0)
 			m <- length(which(form[pa[1],incorrect.items]==form[pa[2],incorrect.items]))
-			
+
 			subgroup <- which(rowSums(form2==0,na.rm=TRUE)==wc)
 
 				if(length(subgroup)!=0) {
@@ -323,7 +320,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 				incorrect.items <- which(form2[pa[2],]==0)
 				smatrix <- as.data.frame(matrix(rep(as.matrix(form[pa[2],incorrect.items]),length(subgroup)),nrow=length(subgroup),byrow=TRUE))
 				emp.agg <- rowSums(form[subgroup,incorrect.items]==smatrix,na.rm=TRUE)
-				p = mean(emp.agg,na.rm=TRUE)/ws 
+				p = mean(emp.agg,na.rm=TRUE)/ws
 
 				 } else p=NA
 
@@ -335,7 +332,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 				k.index=k.index
 			))
 
-	
+
 	}#end internal function
 
 
@@ -353,10 +350,10 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 			      subgroups[[j]] <- subgroups.ind
 			}
 
-	
-			wc  <- sum(form2[pa[1],]==0,na.rm=TRUE) 
+
+			wc  <- sum(form2[pa[1],]==0,na.rm=TRUE)
 			qc  <- wc/ncol(form)
-			ws  <- sum(form2[pa[2],]==0,na.rm=TRUE) 
+			ws  <- sum(form2[pa[2],]==0,na.rm=TRUE)
 			incorrect.items <- which(form2[pa[2],]==0)
 			m <- length(which(form[pa[1],incorrect.items]==form[pa[2],incorrect.items]))
                   cm <- which(form2[pa[1],]==1 & form2[pa[2],]==1)
@@ -377,15 +374,15 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 						smatrix1 <- as.data.frame(matrix(rep(as.matrix(form[pa[2],incorrect.items]),length(subgroups[[j]])),nrow=length(subgroups[[j]]),byrow=TRUE))
 						smatrix2 <- as.data.frame(matrix(rep(as.matrix(form2[pa[2],]),length(subgroups[[j]])),nrow=length(subgroups[[j]]),byrow=TRUE))
 						emp.agg <- rowSums(form[subgroups[[j]],incorrect.items]==smatrix1,na.rm=TRUE)
-						pr[j] = mean(emp.agg,na.rm=TRUE)/ws 
+						pr[j] = mean(emp.agg,na.rm=TRUE)/ws
 						prob[j,] <- colMeans((form2[subgroups[[j]],]==1)&(smatrix2==1),na.rm=TRUE)
 						weight[j,] <- (((1+g)/(1-g))*exp(1))^(prob[j,]*d2)
 						pj[j] <-  mean(((form2[subgroups[[j]],]==1 & smatrix2==1)*1)%*%t(t(weight[j,])),na.rm=TRUE)
 
-					 } else 
-				
+					 } else
+
 					if(length(subgroups[[j]])==0) {
-							pr[j]=NA 
+							pr[j]=NA
 							pj[j]=NA
 					}
 				}
@@ -395,29 +392,29 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 			Qrs2 <- Qrs^2
 			Qrs3 <- 0:ncol(form)
 			mm <- ceiling(sum(weight[wc+1,cm],na.rm=TRUE))+m
-				
+
 				pred1 <- predict(lm(pr~1+Qrs))
 				pred.1 <- c()
-				for(i in 1:(ncol(form)+1)){ 
+				for(i in 1:(ncol(form)+1)){
 					if(length(which(as.character(1:(ncol(form)+1))[i]==names(pred1)))!=0){
 						pred.1[i]=pred1[which(as.character(1:(ncol(form)+1))[i]==names(pred1))]} else pred.1[i]=NA
                         }
 				pred2 <- predict(lm(pr~1+Qrs+Qrs2))
 				pred.2 <- c()
-				for(i in 1:(ncol(form)+1)){ 
+				for(i in 1:(ncol(form)+1)){
 					if(length(which(as.character(1:(ncol(form)+1))[i]==names(pred2)))!=0){
 						pred.2[i]=pred2[which(as.character(1:(ncol(form)+1))[i]==names(pred2))]} else pred.2[i]=NA
                         }
 
 				pred3 <- exp(predict(glm(ws*pr ~ Qrs3 ,family=poisson())))
 				pred.3 <- c()
-				for(i in 1:(ncol(form)+1)){ 
+				for(i in 1:(ncol(form)+1)){
 					if(length(which(as.character(1:(ncol(form)+1))[i]==names(pred3)))!=0){
 						pred.3[i]=pred3[which(as.character(1:(ncol(form)+1))[i]==names(pred3))]} else pred.3[i]=NA
                         }
 				pred4 <- exp(predict(glm(ws*pr+ceiling(pj) ~ Qrs3 ,family=poisson())))
 				pred.4 <- c()
-				for(i in 1:(ncol(form)+1)){ 
+				for(i in 1:(ncol(form)+1)){
 					if(length(which(as.character(1:(ncol(form)+1))[i]==names(pred4)))!=0){
 						pred.4[i]=pred4[which(as.character(1:(ncol(form)+1))[i]==names(pred4))]} else pred.4[i]=NA
                         }
@@ -460,7 +457,7 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 
 		  R <- 1-(P+Q)
 		  I=length(P)
-  
+
 		  rec <- vector("list",I+1)
 		  rec[[1]]=matrix(0,nrow=I+1,ncol=I+1)
 		  rec[[1]][1,1] <- 1
@@ -469,16 +466,16 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 		               rbind(0,P[k-1]*rec[[k-1]])[-(I+2),]+
 		               cbind(0,Q[k-1]*rec[[k-1]])[,-(I+2)]
 		  }
-  
+
 		  for(k in 1:(I+1)){ rec[[k]]=t(rec[[k]])}
-  
+
 		  upper <- matrix(nrow=I+1,ncol=I+1)
 		  for(x in 1:(I+1)){
 		    for(y in 1:(I+1)) {
 		      upper[x,y] = sum(rec[[I+1]][x:(I+1),y:(I+1)])
 		    }
 		  }
-  
+
 		  prob.table <- expand.grid(0:I,0:I)
 		  colnames(prob.table) <- c("IncorrectMatch","CorrectMatch")
 		  prob.table <- prob.table[which(rowSums(prob.table)<=I),]
@@ -491,21 +488,21 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 		    prob.table[i,4] <- upper[x+1,y+1]
 		    prob.table[i,5] <- rec[[I+1]][x+1,y+1]
 		  }
-  
+
 		  for(i in 1:(nrow(prob.table))){
 		    r = prob.table[i,4]
 		    marked = which(prob.table[,4] <= r)
 		    prob.table[i,6] <- sum(prob.table[marked,5])
 		  }
-	  
+
 		  colnames(prob.table)[3:6] <- c("NonMatch","Upper",
 		                                 "Probability","TailProbability")
 		  p = prob.table[which(prob.table[,1]==n & prob.table[,2]==m),6]
 		  list(prob.table[,-4],p)
 		}
 
-		theta.est1 <- thetas[pa[1],]    
-		theta.est2 <- thetas[pa[2],] 
+		theta.est1 <- thetas[pa[1],]
+		theta.est2 <- thetas[pa[2],]
 
 	      probabilities1 <- irtprob(ability=theta.est1,item.param=ip)
 
@@ -528,24 +525,24 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
    		m <- sum(form[pa[1],]==key & form[pa[2],]==key,na.rm=TRUE)
 
    		n <- sum((form[pa[1],]==form[pa[2],]) & (form[pa[1],]!=key),na.rm=TRUE)
-                                  
+
 		m4 = gtd(P=P,Q=Q,m=m,n=n)
 
 		return(list(ability1=theta.est1,
 				ability2=theta.est2,
 				prob.corr.match=P,
-				prob.incorr.match=Q,			
+				prob.incorr.match=Q,
 				exact.prob.dist=m4[[1]],
 				p.value=m4[[2]]
 			))
 	}
-	
+
 ###########################################################################################################################
 
 
 if(exists("single.pair") & is.null(single.pair)==FALSE) {
 
-	w.index   <- omega(form=data[,item.loc],ip=item.par,pa=single.pair2,resp.options=resp.options,key=key)	
+	w.index   <- omega(form=data[,item.loc],ip=item.par,pa=single.pair2,resp.options=resp.options,key=key)
 	GBT.index <-   GBT(form=data[,item.loc],ip=item.par,pa=single.pair2,resp.options=resp.options)
 	m4.index  <-    M4(form=data[,item.loc],ip=item.par,pa=single.pair2,resp.options=resp.options,key=key)
 	if(rowSums(scored.data[single.pair2[2],],na.rm=TRUE)!=ncol(data[,item.loc])) { k.index <- k(form=data[,item.loc],form2=scored.data,pa=single.pair2) } else k.index <- NULL
@@ -577,7 +574,7 @@ if(exists("many.pairs") & is.null(many.pairs)==FALSE) {
 
 	out.many <- as.data.frame(cbind(many.pairs,many.pairs2))
 	colnames(out.many) <- c("Suspected Copier","Suspected Source","Suspected Copier Row #","Suspected Source Row #")
-	
+
 	out.many$W.pvalue 	<- NA
 	out.many$GBT.pvalue 	<- NA
 	out.many$M4.pvalue 	<- NA
@@ -586,7 +583,7 @@ if(exists("many.pairs") & is.null(many.pairs)==FALSE) {
 	out.many$K2.pvalue 	<- NA
 	out.many$S1.pvalue 	<- NA
 	out.many$S2.pvalue 	<- NA
-	
+
 	for(i in 1:nrow(out.many)) {
 		copy.pair <- many.pairs2[i,]
 		w.index <- omega(form=data[,item.loc],ip=item.par,pa=copy.pair,resp.options=resp.options,key=key)
@@ -606,7 +603,7 @@ if(exists("many.pairs") & is.null(many.pairs)==FALSE) {
 	}
 
 	outCD <- list(data=data,
-			  output.manypairs = out.many,	  
+			  output.manypairs = out.many,
 			  item.loc = item.loc,
                     item.par = item.par,
                     center.id = center.id,
@@ -642,7 +639,7 @@ if(exists("centers") & is.null(centers)==FALSE) {
 			  }
 			 }
 			colnames(pt) <- c("Suspected Copier","Suspected Source","Suspected Copier Row #","Suspected Source Row #")
-	
+
 			pt$W.pvalue 	<- NA
 			pt$GBT.pvalue 	<- NA
 			pt$M4.pvalue 	<- NA
@@ -651,7 +648,7 @@ if(exists("centers") & is.null(centers)==FALSE) {
 			pt$K2.pvalue 	<- NA
 			pt$S1.pvalue 	<- NA
 			pt$S2.pvalue 	<- NA
-	
+
 			for(j in 1:nrow(pt)) {
 				copy.pair <- as.numeric(pt[j,3:4])
 				w.index <- omega(form=data[,item.loc],ip=item.par,pa=copy.pair,resp.options=resp.options,key=key)
@@ -668,15 +665,15 @@ if(exists("centers") & is.null(centers)==FALSE) {
 				pt[j,]$S1.pvalue  <- k.variants$S1.index
 				pt[j,]$S2.pvalue  <- k.variants$S2.index
 			}
-	
+
 			out.centers[[i]] <- pt
 		} else {out.centers[[i]] <- NULL}
-	
+
 	}
 
 
 	outCD <- list(data=data,
-			  output.centers = out.centers,	  
+			  output.centers = out.centers,
 			  item.loc = item.loc,
                     item.par = item.par,
                     center.id = center.id,
@@ -693,5 +690,3 @@ if(exists("centers") & is.null(centers)==FALSE) {
 
 
 }
-
-
