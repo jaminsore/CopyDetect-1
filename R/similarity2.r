@@ -112,38 +112,39 @@ if(is.null(centers)==FALSE) {
 
 	resp = data[,item.loc]
 
-	for(i in 1:ncol(resp)) {
-  	  hold1 <- which(resp[,i]==key[i])
-	  hold2 <- which(resp[,i]==max(resp.options))
+  max_resp <- apply(resp, 2, max, na.rm = TRUE)
 
-  	  resp[hold1,i] = max(resp.options)
-	  resp[hold2,i] = key[i]
-	}
+  key_mask <- t(apply(resp, 1, `==`, key))
+  key_mask[is.na(key_mask)] <- FALSE
+
+  max_mask <- t(apply(resp, 1, `==`, max_resp))
+  max_mask[is.na(max_mask)] <- FALSE
+
+  resp[key_mask] <- t(apply(key_mask, 1, `*`, max_resp))[key_mask]
+  resp[max_mask] <- t(apply(max_mask, 1, `*`, key))[max_mask]
 
 	nrm <- mirt(resp, 1, 'nominal')
 	ipar.nrm <- coef(nrm, simplify=T, IRTpars = TRUE)$item
 
 	# Reshuffle ipar.nrm, so it is aligned with the original data
 
-	for(i in 1:ncol(resp)) {
+  par_cols <- ncol(ipar.nrm)
+  prob_cols <- ncol(ipar.nrm) / 2
+  a <- ipar.nrm[, 1:prob_cols]
+  c <- ipar.nrm[, (prob_cols + 1):par_cols]
 
-	  hold1 = ipar.nrm[i,max(resp.options)]
-	  hold2 = ipar.nrm[i,key[i]]
+  max_idx <- cbind(seq_along(max_resp), max_resp)
+  key_idx <- cbind(seq_along(key), key)
 
-  	  ipar.nrm[i,max(resp.options)] = hold2
-	  ipar.nrm[i,key[i]] = hold1
-	}
+  for(p in list(a=a, c=c)) {
+    tmp_max <- p[max_idx]
+    tmp_key <- p[key_idx]
 
-	for(i in 1:ncol(resp)) {
+    p[max_idx] <- tmp_key
+    p[key_idx] <- tmp_max
+  }
 
-	  hold1 = ipar.nrm[i,max(resp.options)+max(resp.options)]
-	  hold2 = ipar.nrm[i,key[i]+max(resp.options)]
-
-  	  ipar.nrm[i,max(resp.options)+max(resp.options)] = hold2
-	  ipar.nrm[i,key[i]+max(resp.options)] = hold1
-	}
-
-	item.par <- ipar.nrm
+	item.par <- cbind(a, c)
 
 
 #Check item parameter file is appropriate
@@ -177,8 +178,12 @@ for(i in 1:ncol(scored.data)){ scored.data[,i] <- as.numeric((data[,item.loc[i]]
     prob_cols <- ncol(item.param) / 2
     a <- item.param[, 1:prob_cols]
     c <- item.param[, (prob_cols + 1):par_cols]
+
+    a[is.na(a)] <- -1
+    c[is.na(c)] <- -9
+
     top <- exp(ability * a + c)
-    top[is.na(top)] <- 0
+    ## top[is.na(top)] <- 0
     top / rowSums(top)
   }
 
@@ -218,20 +223,22 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 
 		obs.match <- length(which(form[pa[1],]==form[pa[2],]))
 
-	      probabilities <- irtprob(ability=theta.est1,item.param=ip)
+    probabilities <- irtprob(ability=theta.est1,item.param=ip)
 
-			colnames(probabilities) <- resp.options
-			row.names <- c("Item 1");for(i in 2:ncol(form)){row.names <- c(row.names,paste("Item ",i,sep="")) }
-			rownames(probabilities) <- row.names
+    colnames(probabilities) <- resp.options
+    row.names <- c("Item 1");for(i in 2:ncol(form)){row.names <- c(row.names,paste("Item ",i,sep="")) }
+    rownames(probabilities) <- row.names
 
-			miss.items <- which(form[pa[2],]=="NA")
-                    if(length(miss.items)==0) { miss.items <- which(is.na(form[pa[2], ]) == TRUE)}
+    miss.items <- which(form[pa[2],]=="NA")
+    if(length(miss.items)==0) { miss.items <- which(is.na(form[pa[2], ]) == TRUE)}
 
-			for(i in miss.items){ form[pa[2], i] = resp.options[which(resp.options != key[i])][which.max(probabilities[i,which(resp.options != key[i])])] }
+    for(i in miss.items){ form[pa[2], i] = resp.options[which(resp.options != key[i])][which.max(probabilities[i,which(resp.options != key[i])])] }
 
-				pvec <- c()
-				for(i in 1:ncol(form)){ pvec[i]=probabilities[i,which(resp.options==form[pa[2],i])] }
 
+    pvec <- c()
+
+    for(i in 1:ncol(form)){ pvec[i]=probabilities[i,which(resp.options==form[pa[2],i])] }
+    ## print(pvec)
 		exp.match <- sum(pvec)
 		sd.match  <- sqrt(sum(pvec*(1-pvec)))
 
@@ -239,9 +246,9 @@ if(exists("many.pairs")==TRUE & is.null(many.pairs)==FALSE) {
 		p.value <- pnorm(w.value,0,1,lower.tail=FALSE)
 
 		return(list(exp.match=exp.match,obs.match=obs.match,
-				sd.match=sd.match,
-				W.value=w.value,
-			 	p.value=p.value))
+                sd.match=sd.match,
+                W.value=w.value,
+                p.value=p.value))
 	}#end internal function
 
 
