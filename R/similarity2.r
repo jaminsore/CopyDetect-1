@@ -125,6 +125,7 @@ if(is.null(centers)==FALSE) {
 
 	nrm <- mirt(resp, 1, 'nominal')
 	ipar.nrm <- coef(nrm, simplify=T, IRTpars = TRUE)$item
+  ipar.nrm <- ipar.nrm[, sort(colnames(ipar.nrm))]
 
 	# Reshuffle ipar.nrm, so it is aligned with the original data
 
